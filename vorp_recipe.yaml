@@ -1,0 +1,51 @@
+$engine: 3
+$onesync: on
+name: VORPCore
+version: 2.2.0
+author: vorpcore
+description: VorpCore Official txAdmin recipe! This will set up a base vorp official server.
+
+variables:
+    steam_webApiKey: "none"
+
+tasks:
+# Recipe Specific server.cfg files
+  - action: download_github
+    src: https://github.com/KnownScripts/redm-rp
+    ref: main
+    dest: ./temp/redm-rp
+  
+  - action: move_path
+    src: ./temp/redm-rp/server.cfg
+    dest: ./server.cfg
+  
+# Run Database SQL
+  - action: connect_database
+  - action: query_database
+    file: ./temp/redm-rp/vrp.sql
+    
+# Download default CFX resources
+  - action: download_github
+    src: https://github.com/citizenfx/cfx-server-data
+    ref: master
+    subpath: resources
+    dest: ./resources/
+
+# Download Pre-Made Files
+  - action: download_github
+    src: https://github.com/VORPCORE/vorp_pre-made
+    ref: main
+    dest: ./temp/premade
+  
+# Move all vorp resources and files to root for txadmin
+  - action: move_path
+    src: ./temp/premade/server/resources/[VORP]
+    dest: ./resources/[VORP]
+
+  - action: move_path
+    src: ./temp/premade/server/icon.png
+    dest: ./icon.png
+
+# Clean up temporary files
+  - action: remove_path
+    path: ./temp
